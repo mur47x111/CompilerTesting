@@ -1,0 +1,11 @@
+#!/bin/bash
+
+# junit and our test cases are added to the bootclasspath in order to get
+# @DontInline effective. Apparently only privileged code will not drop the
+# annotation. See hotspot/src/share/vm/classfile/classFileParser.cpp:ClassFileParser::AnnotationCollector::annotation_index
+
+mx -p ${GRAAL_HOME} vm \
+    -Xbootclasspath/a:lib/graal-directives.jar:lib/junit-4.11.jar:lib/hamcrest-core-1.3.jar:bin \
+    -G:-RemoveNeverExecutedCode -G:+UseGraalInstrumentation -G:-InlineDuringParsing \
+    -G:SmallCompiledLowLevelGraphSize=0 \
+    org.junit.runner.JUnitCore $@
